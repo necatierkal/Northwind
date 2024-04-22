@@ -57,6 +57,16 @@ namespace Northwind.Api.Controllers
 
         }
 
+
+        /*
+         products/{id} (GET)
+        products (Post) yeni ürün ekle
+        products/{id} (put) id si bu olan ürünü güncelle
+        //petch olursa şu id nin şu kolonunu güncelle deriz.
+        products/{id} (Delete) id si şu olan ürünü sil.
+         
+         */
+
     }
 
 }
