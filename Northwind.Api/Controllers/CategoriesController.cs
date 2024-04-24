@@ -12,6 +12,18 @@ namespace Northwind.Api.Controllers
     [ApiController] //Bir web uygulaması controlleri değil api controlleri olduğunu belirttik. Yani bodyden veri oklu dedik.
     public class CategoriesController : ControllerBase //Controller olabilmesi için ControllerBas den inherit edilmesi gerekiyor.
     {
+
+        /*Dependencyinjection: Constructorda aldığımız parametreyi içerisinde başka bir parametreye set etmektir. */
+        private readonly NorthwindContext _context; 
+        public CategoriesController(NorthwindContext context)
+        {
+            _context = context;
+                
+        }
+
+
+
+
         [HttpGet]
         [ProducesResponseType(200,Type = typeof(Category[]))]//200 gelirse bu veri tipi dönecek demek. Iactionresult kullanıyorsak bu şekilde dönüş tipi belirtilmeli.
         public IActionResult Get() //Model bu. Normalde Models klasörüne almalıyız. Controller içindeki public metodlara action diyeceğiz. Bu bir action dır.
@@ -21,14 +33,14 @@ namespace Northwind.Api.Controllers
                           //IActionResult yazarsak swagger dönüş tipini bilemez. Buraya Categories yazmazsak yukarıda ProduceResponseType belirtmeliyiz.
 
         {
-            using (var context = new NorthwindContext())
-            {
-                var res = context.Categories.ToList();
+            //using (var context = new NorthwindContext()) //Yukarıda constructorda dependency injection ile oluşturduğumuz için artık bu şekilde newlemeye gerek yok.
+            //{
+                var res = _context.Categories.ToList();
                 return Ok(res);//Parametre olmadığı zaman ok result. İçinde body de olduğu için okobjectresult döndük. IActionresult olarak metodun tipini seçersek hiçbirinde hata vermez.
                 //return Ok();
                 //return NotFound();
                 //Dönmek istediğimiz her actionresult'ı return e yazabiliriz.
-            }
+            //}
 
 
         }
@@ -38,9 +50,9 @@ namespace Northwind.Api.Controllers
         [ProducesResponseType(200, Type = typeof(Product[]))]
         public IActionResult Get(int id) //Bir aksiyon parametre alıyorsa model binding devreye giriyor. Bunun görevi parametreyi buraya bağlamak.
         {
-            using (var context = new NorthwindContext())
-            {
-                var res = context.Products.Where(t=>t.CategoryId==id).ToList();
+            //using (var context = new NorthwindContext())
+            //{
+                var res = _context.Products.Where(t=>t.CategoryId==id).ToList();
                 return Ok(res);
 
                 /*
@@ -53,7 +65,7 @@ namespace Northwind.Api.Controllers
                  
                  */
 
-            }
+            //}
 
         }
 

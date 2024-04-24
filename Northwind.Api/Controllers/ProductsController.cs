@@ -40,10 +40,14 @@ namespace Northwind.Api.Controllers
      */
 
 
+
     [Route("api/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
     {
+
+
+
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(Product[]))]
         public IActionResult Get()

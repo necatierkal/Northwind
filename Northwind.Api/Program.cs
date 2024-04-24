@@ -1,18 +1,22 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Northwind.Api.Validators;
+using Northwind.Persistance.Contexts;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add services to the container. 
+//Burasýnýn altý IOC Container dýr.
 
 builder.Services.AddControllers(); //Controller (MVC patterni kullanýlacak) ile çalýþacaðýmýzý belirtiyoruz, gerekli baðýmlýlýk ve konfigürasyonlarý eklemesini istedik. 
 //Bu satýr use controller tikini iþaretlediðimiz için geldi. (Yeni Proje oluþtururken.)
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
-builder.Services.AddEndpointsApiExplorer(); //Swagger ile ilgili gerekli konfigürasyon ve baðýmlýlýklarý ekler
+
+builder.Services.AddEndpointsApiExplorer(); //Swagger ile ilgili gerekli konfigürasyon ve baðýmlýlýklarý ekler 
 builder.Services.AddSwaggerGen(); //Swagger ile ilgili gerekli konfigürasyon ve baðýmlýlýklarý ekler
 
+ 
 
 //builder.Services.AddFluentValidation();//Fluent Validation konfigürasyonunu ekledik. Deprecated olmuþ yani kaldýrýlacak bu þekilde kullanmamalýyýz.
 //Yukarýdaki yerine bu þekilde yazdýk
@@ -27,9 +31,14 @@ builder.Services.AddFluentValidationAutoValidation(t =>
 //Hata yönetim standartlarýný belirlemek için RFC7231 standartlarý var.
 
 
+builder.Services.AddTransient<NorthwindContext>(); //Herbir istekte yeni instance oluþturur. Ýstek sonlandýðýnda connection sonlanýr.
+builder.Services.AddScoped<NorthwindContext>(); //Ýlk istekte oluþturur. On kez ayný istekte bulunulursa ilk oluþturduðu connection ý kullanýr ayrý ayrý on instance üretmez.
+builder.Services.AddSingleton<NorthwindContext>();//Sadece bir instance oluþturur. Uygulama ayakta olduðu sürece çalýþýr.
+
+
 var app = builder.Build();
 //---------------------------------------------------------------------------------------------------------
-//Buranýn altý middleware larý yazdýðýmýz yer. Üstü ise hertürlü konfigürasyonlarý yazdýðýmýz yer.
+//Buranýn altý middleware larý yazdýðýmýz yer. Üstü ise hertürlü konfigürasyonlarý ve baðýmlýlýklarý yazdýðýmýz yer.
 //---------------------------------------------------------------------------------------------------------
 
 // Configure the HTTP request pipeline.
