@@ -1,3 +1,7 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Northwind.Api.Validators;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -9,9 +13,24 @@ builder.Services.AddControllers(); //Controller (MVC patterni kullanýlacak) ile 
 builder.Services.AddEndpointsApiExplorer(); //Swagger ile ilgili gerekli konfigürasyon ve baðýmlýlýklarý ekler
 builder.Services.AddSwaggerGen(); //Swagger ile ilgili gerekli konfigürasyon ve baðýmlýlýklarý ekler
 
-var app = builder.Build();
 
+//builder.Services.AddFluentValidation();//Fluent Validation konfigürasyonunu ekledik. Deprecated olmuþ yani kaldýrýlacak bu þekilde kullanmamalýyýz.
+//Yukarýdaki yerine bu þekilde yazdýk
+builder.Services.AddFluentValidationAutoValidation(t =>
+{
+    t.DisableDataAnnotationsValidation = true; //Data annotion konfigürasyonu da yapmýþtýk. Bu deðer true yapýlýrsa data annotion konfigürasyonlarýný görmez. Sadece fluent mapping yapar.
+}).AddValidatorsFromAssemblyContaining<ProductValidator>();//Category için tekrar yapmaya gerek yok çünkü ayný assemblyde. Product validator ýn tanýmlý olduðu tüm validasyonlarý gör dedik.
+//AddValidatorsFromAssemblyContaining<Program>();// Program nesnesinin tanýmlý olduðu assembly i verdik yani northwind.api.Productvalidator da diyebilirdik. yine northwind api assemblisini vermiþ olurduk.
+//Bu kod bloðu sayesinde kurallarýný Northwind api içerisinde Validators içinde geçen tüm classlarda (ProdcutValidator,CategoryValidator....)
+//data annotion yoluyla belirlediðimiz kurallarý ototmatik yönetir.
+
+//Hata yönetim standartlarýný belirlemek için RFC7231 standartlarý var.
+
+
+var app = builder.Build();
+//---------------------------------------------------------------------------------------------------------
 //Buranýn altý middleware larý yazdýðýmýz yer. Üstü ise hertürlü konfigürasyonlarý yazdýðýmýz yer.
+//---------------------------------------------------------------------------------------------------------
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -22,6 +41,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthorization();
 
-app.MapControllers();//Route larý conroller lara göre yapmasýný istedik. //Bu satýr use controller tikini iþaretlediðimiz için geldi. (Yeni Proje oluþtururken.)
+app.MapControllers();//Route larý controller lara göre yapmasýný istedik. //Bu satýr use controller tikini iþaretlediðimiz için geldi. (Yeni Proje oluþtururken.)
 
 app.Run();
