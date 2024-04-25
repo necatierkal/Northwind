@@ -1,7 +1,13 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.EntityFrameworkCore;
 using Northwind.Api.Validators;
 using Northwind.Persistance.Contexts;
+
+
+/*Bütün sunucu ayarlarý baðlantý ve baðýmlýlýk ayarlarý middleware ayarlarý burada yapýlacak. Tek bir noktadan yapýlmalý.*/
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,9 +37,31 @@ builder.Services.AddFluentValidationAutoValidation(t =>
 //Hata yönetim standartlarýný belirlemek için RFC7231 standartlarý var.
 
 
-builder.Services.AddTransient<NorthwindContext>(); //Herbir istekte yeni instance oluþturur. Ýstek sonlandýðýnda connection sonlanýr.
-builder.Services.AddScoped<NorthwindContext>(); //Ýlk istekte oluþturur. On kez ayný istekte bulunulursa ilk oluþturduðu connection ý kullanýr ayrý ayrý on instance üretmez.
-builder.Services.AddSingleton<NorthwindContext>();//Sadece bir instance oluþturur. Uygulama ayakta olduðu sürece çalýþýr.
+builder.Services.AddDbContext<NorthwindContext>(opt =>
+{
+    //1.yöntem
+    //var connStr = builder.Configuration.GetSection("ConnectionStrings")["NorthwindConnection"]; //appsetting içerisindeki her süslü parantez arasý bir section dýr.
+                                                                                                //Connection string altýndaki northwindconnection deðerini verdi.
+    //2.yöntem
+    //var connStr = builder.Configuration.GetValue<string>("ConnectionStrings:NorthwindConnection");  //Connection string altýndaki northwindconnection deðerini verdi.
+
+    //3.yöntem
+    var connStr = builder.Configuration.GetConnectionString("NorthwindConnection");//1.yöntemin kýsayoludur. (Extension-shorthand)
+
+    opt.UseSqlServer(connStr);//appsetting.json içerisindeki connection okundu.
+
+   // opt.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB; Initial Catalog= Northwind; Integrated Security=true");//Burada deðil appsettings içerisinde yazýlmalý
+});//AddContext hem addscope yaptý hem de options ý build etti. 
+
+
+
+//builder.Services.AddTransient<NorthwindContext>(); //Herbir istekte yeni instance oluþturur. Ýstek sonlandýðýnda connection sonlanýr. Transaction yoðun iþlemlerde bu kullanýlabilir. 
+//builder.Services.AddScoped<NorthwindContext>(); //Northwindcontext için runtime da instance oluþtur.
+//Ýlk istekte oluþturur. On kez ayný istekte bulunulursa ilk oluþturduðu instance ý kullanýr
+                                                //ayrý ayrý on instance üretmez. Genelde bunu kullanacaðýz.
+//builder.Services.AddSingleton<NorthwindContext>();//Sadece bir instance oluþturur. Uygulama ayakta olduðu sürece çalýþýr.
+                                                  //Sakýncasý herkes ayný kullanýcýymýþ gibi gelir  loglarda istemediðimiz bir durum.
+                                                  //Bu üçünü tekrar araþtýr.
 
 
 var app = builder.Build();
@@ -42,7 +70,7 @@ var app = builder.Build();
 //---------------------------------------------------------------------------------------------------------
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (builder.Environment.IsDevelopment())
 {
     app.UseSwagger(); //Jason formatýnda wsdl benzeri içerik oluþturur.
     app.UseSwaggerUI();  //Jason formatýnda wsdl benzeri içeriði oluþtururken bir arayüz oluþturur.
