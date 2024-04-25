@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Northwind.Persistance.Contexts;
 using Northwind.Persistance.Entities;
 
@@ -41,9 +42,12 @@ namespace Northwind.Api.Controllers
                         ** Basic Authentication
                         ** Sosyal Medya (Google vb.) Authentication
                         ** oAuth 2.0 Authentication (E-Devlet bunu kullanıyor  (Bu bir protokol, JWT token kullanılıyor ama doğrulama farklı.
-                                                    Aynı server hem token üretip hem doğrulamada kullanımaz. Bu süreç clientin servera istek yapmasıyla başlar serverdan dönen response ta kmlik doğrulaması yapması ve nereden yapacağının bilgisi döner.
-                                                    Client server tarafından gitmesi gerektiği bildirilen Identity Manager(Ücretli) ve KeyClock gibi uygulamalara gider. Token buralarda üretilir. Client buradan aldığı token ı server a taşır. 
-                                                    Server yine Identity Manager ya da KeyClock ın olduğu serverdan token doğrulamasını alır ve doğrulama geçerliyse client a response döner.)
+                                                    Aynı server hem token üretip hem doğrulamada kullanımaz. Bu süreç clientin servera istek yapmasıyla başlar
+                                                    serverdan dönen response ta kmlik doğrulaması yapması ve nereden yapacağının bilgisi döner.
+                                                    Client server tarafından gitmesi gerektiği bildirilen Identity Manager(Ücretli) ve KeyClock gibi uygulamalara gider.
+                                                    Token buralarda üretilir. Client buradan aldığı token ı server a taşır. 
+                                                    Server yine Identity Manager ya da KeyClock ın olduğu serverdan token doğrulamasını alır ve doğrulama
+                                                        geçerliyse client a response döner.)
                         ** JWT (Jason Web Token) Authentication : Bir token üretiyoruz client bundan sonra sürekli o token ı kullanarak geliyor. Respone ta dönüyoruz bu tokenı
                                                                   Bundan sonra tokenla request yapması gerekir. Server da her istek için tekrar token doğrulanır. 
                                                                   (Authorization header ında Bareer key wordüne token valuesini gönderiyor)
@@ -87,7 +91,7 @@ namespace Northwind.Api.Controllers
 
         }
 
-
+        [Authorize] // Bu işlemin (İd ye göre ürün getirme işlemi) yapılabilmesi için authorize olması yani kimlik doğrulanması gerekir. Doğrulanmazsa 401 döner.
         [HttpGet("{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]//Dokümante ettik swagger arayüzünde bu statü kodunu gösterecek.
         public IActionResult Get(int id)
@@ -154,7 +158,7 @@ namespace Northwind.Api.Controllers
         }
 
 
-
+        [Authorize(Roles = "Admin,Moderator")] //Silme işlemi için hem authorize olmak hem de admin ya da moderator rolüne sahip olması gerektiğini belirttik. Birden fazla rol yanyana virgüle koyarak eklenebilir.
         [HttpDelete("{id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public IActionResult Delete(int id)
