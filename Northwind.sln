@@ -3,9 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34525.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Northwind.Api", "Northwind.Api\Northwind.Api.csproj", "{E709AD01-584C-47E1-9344-949A2BB87C90}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Northwind.Api", "Northwind.Api\Northwind.Api.csproj", "{E709AD01-584C-47E1-9344-949A2BB87C90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Northwind.Persistance", "Northwind.Persistance\Northwind.Persistance.csproj", "{C5282F42-D11C-4B49-A6D7-7C3893719F40}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Northwind.Persistance", "Northwind.Persistance\Northwind.Persistance.csproj", "{C5282F42-D11C-4B49-A6D7-7C3893719F40}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Çözüm Öğeleri", "Çözüm Öğeleri", "{8C456D73-C9B3-441A-89D6-9385DE61B298}"
+	ProjectSection(SolutionItems) = preProject
+		Notlar.txt = Notlar.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

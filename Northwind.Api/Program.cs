@@ -22,6 +22,19 @@ builder.Services.AddControllers(); //Controller (MVC patterni kullanýlacak) ile 
 //Bu satýr use controller tikini iþaretlediðimiz için geldi. (Yeni Proje oluþtururken.)
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
+#region CORSSETTINGS
+
+builder.Services.AddCors(options =>
+options.AddDefaultPolicy(policy =>
+                        policy.AllowAnyOrigin()
+                       .AllowAnyHeader()
+                       .AllowAnyMethod()
+                       //.AllowCredentials()
+//.WithOrigins() dersek týrnak içinde domain belirtip isteðin geleceði adresleri belirtebiliriz. Yukarýda bizim konfigürasyonda herþeye izin verdik
+//Bunu salih hocayla deðil Tamer Alb ile yaptýk. Salih Hoca ile yazdýðýmýz api leri tüketebilmek için bu konfigürasyonlara ihtiyacýmýz var.
+));
+#endregion
+
 
 builder.Services.AddEndpointsApiExplorer(); //Swagger ile ilgili gerekli konfigürasyon ve baðýmlýlýklarý ekler 
 builder.Services.AddSwaggerGen(); //Swagger ile ilgili gerekli konfigürasyon ve baðýmlýlýklarý ekler
@@ -79,8 +92,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) //Asp
             RoleClaimType = "role", //Burada bu konfigürasyonu yapmazsak AccountController içindeki  new Claim("role","Moderator"), tanýmýný role keywordü ile yapamazdýk. Bunun yerine ClaimTyper.Role kullanýrdýk role yerine
             NameClaimType = "username",
         };
-    }); 
-                                                                          
+    });
+
 
 
 
@@ -88,10 +101,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) //Asp
 //builder.Services.AddTransient<NorthwindContext>(); //Herbir istekte yeni instance oluþturur. Ýstek sonlandýðýnda connection sonlanýr. Transaction yoðun iþlemlerde bu kullanýlabilir. 
 //builder.Services.AddScoped<NorthwindContext>(); //Northwindcontext için runtime da instance oluþtur.
 //Ýlk istekte oluþturur. On kez ayný istekte bulunulursa ilk oluþturduðu instance ý kullanýr
-                                                //ayrý ayrý on instance üretmez. Genelde bunu kullanacaðýz.
+//ayrý ayrý on instance üretmez. Genelde bunu kullanacaðýz.
 //builder.Services.AddSingleton<NorthwindContext>();//Sadece bir instance oluþturur. Uygulama ayakta olduðu sürece çalýþýr.
-                                                  //Sakýncasý herkes ayný kullanýcýymýþ gibi gelir  loglarda istemediðimiz bir durum.
-                                                  //Bu üçünü tekrar araþtýr.
+//Sakýncasý herkes ayný kullanýcýymýþ gibi gelir  loglarda istemediðimiz bir durum.
+//Bu üçünü tekrar araþtýr.
+
+
+
 
 
 var app = builder.Build();
@@ -105,6 +121,8 @@ if (builder.Environment.IsDevelopment())
     app.UseSwagger(); //Jason formatýnda wsdl benzeri içerik oluþturur.
     app.UseSwaggerUI();  //Jason formatýnda wsdl benzeri içeriði oluþtururken bir arayüz oluþturur.
 }
+
+app.UseCors();//CORS Uygulama. Bunu yazmazsak UseCors ta belirttiðimiz konfigürasyon çalýþmaz. Tamer Alb. ile yaptýk.Authentication üzerinde olmalý
 
 app.UseAuthentication(); //Bu bir middllware dir. Belirlediðimiz authentication standardýnda her istekte kullanýlmasýný saðlar.
 app.UseAuthorization(); //Yetkilendirme varsa çalýþýr. 
