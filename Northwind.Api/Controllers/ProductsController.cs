@@ -112,12 +112,14 @@ namespace Northwind.Api.Controllers
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public IActionResult Post([FromBody] Product product)//Buraya yazılan parametrelerin değerleri sırasıyla formfield, request body, route datada, querystring , uploaded files aranır. Default heryere bakar. Biz sadece bir yer belirtip ...ya bak şeklinde konfigüre edebiliriz. (Post metodunda parametrenin önüne [FromQuery],[FromRoute],[FromForm],[FromBody şeklinde belirtilir.])
+        public IActionResult Post([FromBody] Product product)//Buraya yazılan parametrelerin değerleri sırasıyla formfield, request body, route datada, querystring , uploaded files aranır.
+                                                             //Default heryere bakar. Biz sadece bir yer belirtip ...ya bak şeklinde konfigüre edebiliriz.
+                                                             //(Post metodunda parametrenin önüne [FromQuery],[FromRoute],[FromForm],[FromBody şeklinde belirtilir.])
                                                              //Buraya yazılacak parametreler çok fazlaysa; Product tipini verebiliriz. (Custom bir model yollanırsa karşılaştırmayı modelimi,z göre yapar ve veriyi içindki propertylere göre ister.)
                                                              //Bu örnekte sırayla bakma bodyden bak dedik. Performans ve güvenlik açısından önemli.
                                                              //Model biding sayesinde ototmatik maplendi parametre ve değerleri.
                                                              //Bu metodu kullanmazsak :
-                                                             // Clienttan gelen requestların bütün valuelarına HttpContext.Request içerisine RouteValues,querystrings,Cookies,Header yazıp erişebilirdik.
+                                                             //Clienttan gelen requestların bütün valuelarına HttpContext.Request içerisine RouteValues,querystrings,Cookies,Header yazıp erişebilirdik.
         {
 
             //using var context = new NorthwindContext();
